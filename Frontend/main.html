@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>รายงานคลอรีน</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    #reportTable {
+      border-collapse: collapse;
+      width: 100%;
+      table-layout: auto;
+    }
+    #reportTable th, #reportTable td {
+      border: 1px solid #e0e7ef;
+      text-align: center;
+      padding: 2px 2px;
+      white-space: nowrap;
+      font-size: 0.88rem;
+    }
+    #reportTable thead th {
+      background: #2563eb;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <div class="report-container">
+    <div class="header">
+      <div class="image-container">
+  <img src="https://upload.wikimedia.org/wikipedia/th/thumb/4/48/%E0%B8%95%E0%B8%A3%
+E0%B8%B2%E0%B8%AA%E0%B8%B1%E0%B8%8D%E0%B8%A5%E0%B8%B1%E0%B8%81%E0%B8%A9%E0%B8%93%E0%
+B9%8C%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%9B%E0%B8%B2%E0%B8%
+99%E0%B8%84%E0%B8%A3%E0%B8%AB%E0%B8%A5%E0%B8%A7%E0%B8%87.svg/450px-%E0%B8%95%E0%B8%
+A3%E0%B8%B2%E0%B8%AA%E0%B8%B1%E0%B8%8D%E0%B8%A5%E0%B8%B1%E0%B8%81%E0%B8%A9%E0%B8%93%
+E0%B9%8C%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%9B%E0%B8%B2%E0%B
+8%99%E0%B8%84%E0%B8%A3%E0%B8%AB%E0%B8%A5%E0%B8%A7%E0%B8%87.svg.png?20220520144544" alt="img1" width="11%">
+  <img src="http://localhost:3000/Logo03(1).png" alt="img2" width="45%">
+      <div class="right-controls">
+        <label>วันที่: <input type="date" id="reportDate"></label>
+        <label>ประเภท:
+          <select id="reportType">
+            <option value="daily">Daily Report</option>
+            <option value="monthly">Monthly Report</option>
+            <option value="yearly">Yearly Report</option>
+          </select>
+        </label>
+        <div class="button-group">
+          <button onclick="getReport()">ค้นหา</button>
+          <button onclick="exportExcel()">Export Excel</button>
+          <button onclick="exportPDF()">Export PDF</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-wrapper">
+    <table id="reportTable" class="styled-table">
+      <thead>
+        <tr>
+          <th rowspan="2" style="width:22px">ลำดับ</th>
+          <th rowspan="2" style="width:55px">วันที่</th>
+          <th rowspan="2" style="width:38px">เวลา</th>
+          <th colspan="2" style="width:90px">ปริมาณคลอรีน (mg/l)</th>
+          <th rowspan="2" style="width:80px">อัตราการไหลของน้ำขาเข้า<br>(m³/h)</th>
+          <th rowspan="2" style="width:80px">อัตราการจ่ายคลอรีนรวม<br>(l/h)</th>
+          <th rowspan="2" style="width:70px">ระดับคลอรีนในถังเก็บ<br>(m)</th>
+          <th rowspan="2" style="width:80px">ปริมาณคลอรีนในถังเก็บ<br>(ลิตร)</th>
+        </tr>
+        <tr>
+          <th style="width:45px">ขาเข้าสถานี</th>
+          <th style="width:45px">ขาออกสถานี</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <div style="display: flex; align-items: flex-end; gap: 1.5rem; margin-bottom: 1.5rem;">
+    <div id="summary"></div>
+    <div id="summary-total"></div>
+    <button id="showChartBtn" onclick="showChart()" style="display:none;
+      background:#2563eb;color:#fff;border:none;border-radius:6px;
+      padding:0.7rem 2rem;font-size:1.1rem;font-weight:bold;
+      box-shadow:0 2px 8px #0001;cursor:pointer;transition:background 0.2s;"
+      onmouseover="this.style.background='#1e40af'" onmouseout="this.style.background='#2563eb'">
+      แสดงกราฟ
+    </button>
+  </div>
+
+  <canvas id="chlorineChart" width="900" height="350"></canvas>
+  <canvas id="flowChart" width="900" height="350" style="margin-top:2rem;"></canvas>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,167 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  background-color: #eae9e9;
+  padding: 20px;
+  border-radius: 15px;
+  margin-bottom: 20px;
+}
+
+.header h1 {
+  color: #0a58ff;
+  font-size: 24px;
+  margin: 0;
+}
+
+.right-controls {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+}
+
+.button-group button {
+  background-color: #0a58ff;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+.button-group button:hover {
+  background-color: #004d40;
+}
+
+label {
+  font-weight: bold;
+  color: #000;
+}
+
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  margin: 20px auto 0 auto;
+  padding: 0;
+}
+
+#reportTable {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 800px;
+  font-size: 14px;
+  color: #000;
+}
+
+#reportTable th,
+#reportTable td {
+  border: 1px solid #ccc;
+  padding: 8px 10px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+#reportTable thead th {
+  position: sticky;
+  top: 0;
+  background-color: #0a58ff;
+  color: white;
+  z-index: 1;
+}
+
+#reportTable tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.styled-table {
+  border-collapse: collapse;
+  width: 100%;
+  table-layout: fixed;
+  background: #fff;
+  box-shadow: 0 2px 8px #e0e7ef;
+  border-radius: 8px;
+  overflow: hidden;
+  min-width: 900px;   /* ลดจาก 1200px เหลือ 900px */
+  width: max-content;
+}
+
+.styled-table th, .styled-table td {
+  border: 1px solid #e0e7ef;
+  text-align: center;
+  padding: 4px 1px;
+  font-size: 0.88rem;
+  white-space: normal;
+  vertical-align: middle;
+  word-break: break-word; /* ตัดคำถ้ายาว */
+}
+
+.styled-table thead th {
+  background: #2563eb;
+  color: #fff;
+  font-weight: bold;
+  font-size: 0.85rem;   /* เดิม 1.05rem ลดลงเหลือ 0.95rem */
+}
+
+.styled-table thead tr:first-child th {
+  border-bottom: 2px solid #fff;
+}
+
+.styled-table tbody tr:nth-child(even) {
+  background: #f3f6fa;
+}
+
+.styled-table tbody tr:hover {
+  background: #e0e7ef;
+}
+
+.summary-box {
+  background: #f6fff6;
+  border: 2px solid #b7e1b7;
+  border-radius: 12px;
+  padding: 18px 24px 16px 24px;
+  max-width: 400px;
+  margin: 20px 0 0 0;
+  box-shadow: 0 2px 8px #0001;
+}
+.summary-title {
+  font-size: 1.15rem;
+  font-weight: bold;
+  color: #256c2b;
+  margin-bottom: 10px;
+  letter-spacing: 1px;
+}
+#totalSummaryTable {
+  border-collapse: collapse;
+  width: 100%;
+  font-family: 'Sarabun', Arial, sans-serif;
+}
+#totalSummaryTable th, #totalSummaryTable td {
+  border: 1px solid #b2b2b2;
+  padding: 8px 12px;
+  font-size: 1rem;
+}
+#totalSummaryTable thead th {
+  background: #CCFFCC;
+  color: #222;
+  text-align: left;
+}
+#totalSummaryTable td:last-child, #totalSummaryTable th:last-child {
+  text-align: right;
+}
+
+@media (max-width: 900px) {
+  .styled-table th, .styled-table td {
+    font-size: 0.95rem;
+    padding: 6px 2px;
+  }
+}
+

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>เข้าสู่ระบบ</title>
+  <style>
+    body { font-family: Tahoma, sans-serif; padding: 2rem; background: #f0f8ff; }
+    .login-box { max-width: 350px; margin: 60px auto; background: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 0 10px #b7e1ff; }
+    input { width: 100%; padding: 0.7rem; margin: 0.5rem 0; border-radius: 4px; border: 1px solid #b7e1ff; }
+    button { width: 100%; padding: 0.7rem; background: #4faaff; color: #fff; border: none; border-radius: 4px; font-size: 1rem; }
+  </style>
+</head>
+<body>
+  <div class="login-box">
+    <h2>เข้าสู่ระบบ</h2>
+    <form id="loginForm">
+      <input type="text" name="username" placeholder="ชื่อผู้ใช้" required>
+      <input type="password" name="password" placeholder="รหัสผ่าน" required>
+      <button type="submit">เข้าสู่ระบบ</button>
+    </form>
+    <div id="msg" style="color:red;margin-top:1rem;"></div>
+  </div>
+  <script>
+    document.getElementById('loginForm').onsubmit = async function(e) {
+      e.preventDefault();
+      const form = e.target;
+      const res = await fetch('/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: form.username.value,
+          password: form.password.value
+        })
+      });
+      const result = await res.json();
+      if (result.success) {
+        window.location.href = 'main.html'; // เปลี่ยนจาก index.html เป็น main.html
+      } else {
+        document.getElementById('msg').innerText = result.message || 'เข้าสู่ระบบไม่สำเร็จ';
+      }
+    };
+  </script>
+</body>
+</html>

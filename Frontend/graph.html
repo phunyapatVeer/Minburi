@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>แสดงกราฟคลอรีน</title>
+  <style>
+    body { font-family: Tahoma, sans-serif; padding: 2rem; }
+    #myChart { max-width: 900px; }
+    button { padding: 0.5rem 1.5rem; font-size: 1rem; }
+  </style>
+</head>
+<body>
+  <h2>กราฟแสดงข้อมูลคลอรีน</h2>
+  <button onclick="showChart()">แสดงกราฟ</button>
+  <br><br>
+  <canvas id="myChart" width="900" height="400"></canvas>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    let chartInstance = null;
+
+    function showChart() {
+      fetch('/ChlorineReport?date=2024-07-01&type=daily')
+        .then(res => res.json())
+        .then(data => {
+          console.log('API data:', data);
+          if (!Array.isArray(data) || data.length === 0) {
+            alert('ไม่มีข้อมูลสำหรับแสดงกราฟ');
+            return;
+          }
+          const labels = data.map(row => {
+            const date = new Date(row.Date_Stamp);
+            return date.toLocaleDateString('th-TH') + ' ' + (row.Time_Stamp || '');
+          });
+          const chlorineIn = data.map(row => Number(row.Chlorine_Inlet));
+          const chlorineOut = data.map(row => Number(row.Chlorine_Outlet));
+
+          const ctx = document.getElementById('myChart').getContext('2d');
+          if (window.chartInstance) window.chartInstance.destroy();
+          window.chartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+              labels,
+              datasets: [
+                { label: 'คลอรีนขาเข้า', data: chlorineIn, borderColor: 'blue', fill: false },
+                { label: 'คลอรีนขาออก', data: chlorineOut, borderColor: 'red', fill: false }
+              ]
+            }
+          });
+        })
+        .catch(err => {
+          alert('เกิดข้อผิดพลาดในการโหลดข้อมูลกราฟ');
+          console.error(err);
+        });
+    }
+  </script>
+</body>
+</html>
