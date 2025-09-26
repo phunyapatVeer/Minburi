@@ -15,6 +15,7 @@
   margin: 0;
 }
 
+
 .right-controls {
   display: flex;
   align-items: center;
@@ -125,7 +126,7 @@ label {
 
 .summary-box {
   background: #f6fff6;
-  border: 2px solid #b7e1b7;
+  border: 2px solid #2563eb;
   border-radius: 12px;
   padding: 18px 24px 16px 24px;
   max-width: 400px;
@@ -135,7 +136,7 @@ label {
 .summary-title {
   font-size: 1.15rem;
   font-weight: bold;
-  color: #256c2b;
+  color: #2563eb;
   margin-bottom: 10px;
   letter-spacing: 1px;
 }
@@ -150,7 +151,7 @@ label {
   font-size: 1rem;
 }
 #totalSummaryTable thead th {
-  background: #CCFFCC;
+  background: #2563eb;
   color: #222;
   text-align: left;
 }
@@ -164,4 +165,43 @@ label {
     padding: 6px 2px;
   }
 }
+
+
+#summary-total table {
+  width: auto;
+  min-width: 450px;
+  max-width: 600px;
+  margin-top: 1rem;
+  border-collapse: collapse;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  font-size: 0.9rem;
+  background-color: #fff;
+}
+
+#summary-total th, #summary-total td {
+  border: 1px solid #ddd;
+  padding: 6px 10px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+#summary-total th {
+  background-color: #2563eb;
+  color: #ffffff;
+  font-weight: bold;
+  text-align: center;
+}
+
+#summary-total td:last-child {
+  text-align: right;
+}
+
+#summary-total table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+#summary-total table tbody tr:hover {
+  background-color: #eef5ff;
+}
+
 

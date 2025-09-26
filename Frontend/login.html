@@ -4,26 +4,88 @@
   <meta charset="UTF-8">
   <title>เข้าสู่ระบบ</title>
   <style>
-    body { font-family: Tahoma, sans-serif; padding: 2rem; background: #f0f8ff; }
-    .login-box { max-width: 350px; margin: 60px auto; background: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 0 10px #b7e1ff; }
-    input { width: 100%; padding: 0.7rem; margin: 0.5rem 0; border-radius: 4px; border: 1px solid #b7e1ff; }
-    button { width: 100%; padding: 0.7rem; background: #4faaff; color: #fff; border: none; border-radius: 4px; font-size: 1rem; }
+    /* ส่วนตกแต่งหน้าตา login box, input, button, โลโก้ */
+    body { font-family: Tahoma, sans-serif; padding: 1rem; background: #f0f8ff; }
+    .login-box {
+      max-width: 340px;
+      margin: 30px auto;
+      background: #fff;
+      padding: 1.2rem 1rem 1rem 1rem;
+      border-radius: 12px;
+      box-shadow: 0 0 14px #b7e1ff;
+    }
+    .login-logo {
+      display: block;
+      margin: 0 auto 1.2rem auto;
+      max-width: 300px;
+      width: 100%;
+      height: auto;
+      filter: drop-shadow(0 0 10px #b7e1ff88);
+      transition: transform 0.2s;
+    }
+    .login-logo:hover {
+      transform: scale(1.07);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 1rem;
+      font-size: 1.2rem;
+    }
+    input {
+      width: 100%;
+      padding: 0.5rem;
+      margin: 0.4rem 0;
+      border-radius: 4px;
+      border: 1px solid #b7e1ff;
+      font-size: 0.95rem;
+    }
+    button {
+      width: 100%;
+      padding: 0.5rem;
+      background: #4faaff;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      margin-top: 0.3rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: #2563eb;
+    }
+    #msg {
+      color: red;
+      margin-top: 0.7rem;
+      font-size: 0.95rem;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
   <div class="login-box">
+    <!-- โลโก้ประปา -->
+    <img src="prapa.png" alt="โลโก้ประปา" class="login-logo">
+    <!-- หัวข้อเข้าสู่ระบบ -->
     <h2>เข้าสู่ระบบ</h2>
+    <!-- ฟอร์ม login -->
     <form id="loginForm">
-      <input type="text" name="username" placeholder="ชื่อผู้ใช้" required>
+      <!-- ช่องกรอกชื่อผู้ใช้ -->
+      <input type="text" name="username" id="usernameInput" placeholder="ชื่อผู้ใช้" required>
+      <!-- ช่องกรอกรหัสผ่าน -->
       <input type="password" name="password" placeholder="รหัสผ่าน" required>
+      <!-- ปุ่มเข้าสู่ระบบ -->
       <button type="submit">เข้าสู่ระบบ</button>
     </form>
-    <div id="msg" style="color:red;margin-top:1rem;"></div>
+    <!-- แสดงข้อความ error หรือผลลัพธ์ login -->
+    <div id="msg"></div>
   </div>
   <script>
+    // ส่วนนี้จัดการ submit ฟอร์ม login
     document.getElementById('loginForm').onsubmit = async function(e) {
-      e.preventDefault();
+      e.preventDefault(); // ป้องกันการ reload หน้า
       const form = e.target;
+      // ส่งข้อมูล username/password ไป backend (/login)
       const res = await fetch('/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -34,8 +96,12 @@
       });
       const result = await res.json();
       if (result.success) {
-        window.location.href = 'main.html'; // เปลี่ยนจาก index.html เป็น main.html
+        // ถ้า login สำเร็จ เก็บ username ใน sessionStorage และไปหน้า main.html
+        const username = document.getElementById('usernameInput').value;
+        sessionStorage.setItem('username', username);
+        window.location.href = 'main.html';
       } else {
+        // ถ้า login ไม่สำเร็จ แสดงข้อความ error
         document.getElementById('msg').innerText = result.message || 'เข้าสู่ระบบไม่สำเร็จ';
       }
     };

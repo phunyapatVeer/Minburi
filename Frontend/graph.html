@@ -11,6 +11,13 @@
 </head>
 <body>
   <h2>กราฟแสดงข้อมูลคลอรีน</h2>
+  <label>ประเภท:
+    <select id="reportType">
+      <option value="daily">รายวัน</option>
+      <option value="monthly">รายเดือน</option>
+      <option value="yearly">รายปี</option>
+    </select>
+  </label>
   <button onclick="showChart()">แสดงกราฟ</button>
   <br><br>
   <canvas id="myChart" width="900" height="400"></canvas>
@@ -20,20 +27,56 @@
     let chartInstance = null;
 
     function showChart() {
-      fetch('/ChlorineReport?date=2024-07-01&type=daily')
+      // ดึง type จาก dropdown (ถ้ามี) หรือกำหนดเอง
+      const type = document.getElementById('reportType')?.value || 'daily';
+
+      // สร้าง params สำหรับ fetch
+      let params = '';
+      if (type === 'daily') {
+        params = 'date=2024-07-01&type=daily';
+      } else if (type === 'monthly') {
+        params = 'date=2024-07-01&type=monthly'; // เปลี่ยนเป็นเดือนที่ต้องการ
+      } else if (type === 'yearly') {
+        params = 'date=2024&type=yearly'; // เปลี่ยนเป็นปีที่ต้องการ
+      }
+
+      fetch(`/ChlorineReport?${params}`)
         .then(res => res.json())
         .then(data => {
-          console.log('API data:', data);
           if (!Array.isArray(data) || data.length === 0) {
             alert('ไม่มีข้อมูลสำหรับแสดงกราฟ');
             return;
           }
-          const labels = data.map(row => {
-            const date = new Date(row.Date_Stamp);
-            return date.toLocaleDateString('th-TH') + ' ' + (row.Time_Stamp || '');
-          });
-          const chlorineIn = data.map(row => Number(row.Chlorine_Inlet));
-          const chlorineOut = data.map(row => Number(row.Chlorine_Outlet));
+
+          let labels, chlorineIn, chlorineOut;
+
+          if (type === 'yearly') {
+            // แสดงชื่อเดือน
+            labels = [
+              'ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.',
+              'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'
+            ];
+            chlorineIn = Array(12).fill(0);
+            chlorineOut = Array(12).fill(0);
+            data.forEach(row => {
+              const month = new Date(row.Date_Stamp).getMonth();
+              chlorineIn[month] += Number(row.Chlorine_Inlet);
+              chlorineOut[month] += Number(row.Chlorine_Outlet);
+            });
+          } else if (type === 'monthly') {
+            // แสดงเฉพาะ "วัน" (ตัวเลขวัน)
+            labels = data.map(row => {
+              const date = new Date(row.Date_Stamp);
+              return date.getDate(); // 1,2,3,...
+            });
+            chlorineIn = data.map(row => Number(row.Chlorine_Inlet));
+            chlorineOut = data.map(row => Number(row.Chlorine_Outlet));
+          } else {
+            // daily: แสดง "เวลา"
+            labels = data.map(row => row.Time_Stamp || '');
+            chlorineIn = data.map(row => Number(row.Chlorine_Inlet));
+            chlorineOut = data.map(row => Number(row.Chlorine_Outlet));
+          }
 
           const ctx = document.getElementById('myChart').getContext('2d');
           if (window.chartInstance) window.chartInstance.destroy();
@@ -42,8 +85,8 @@
             data: {
               labels,
               datasets: [
-                { label: 'คลอรีนขาเข้า', data: chlorineIn, borderColor: 'blue', fill: false },
-                { label: 'คลอรีนขาออก', data: chlorineOut, borderColor: 'red', fill: false }
+                { label: 'คลอรีนขาเข้า', data: chlorineIn, borderColor: 'blue', fill: false, borderWidth: 1 },
+                { label: 'คลอรีนขาออก', data: chlorineOut, borderColor: 'red', fill: false, borderWidth: 1 }
               ]
             }
           });
