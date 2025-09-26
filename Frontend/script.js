@@ -36,7 +36,7 @@ function getReport() {
   document.getElementById('showChartBtn').style.display = 'none';
 
   // ดึงข้อมูลจาก backend
-  fetch(`/ChlorineReport?date=${date}&type=${type}`)
+  fetch(`/api/ChlorineReport?date=${date}&type=${type}`)
     .then(res => res.json())
     .then(data => {
       // เรียงข้อมูลตามเวลา
@@ -338,7 +338,7 @@ function exportExcel() {
   const type = document.getElementById('reportType').value;
   const typeMap = { daily: 'Daily', monthly: 'Monthly', yearly: 'Yearly' };
 
-  fetch('/export/excel', {
+  fetch('/api/export/excel', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ data: currentData, type })
