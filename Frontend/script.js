@@ -368,9 +368,9 @@ function exportPDF() {
     return;
   }
   const type = document.getElementById('reportType').value;
-  let url = '/export/pdf';
-  if (type === 'monthly') url = '/export/pdf/monthly';
-  else if (type === 'yearly') url = '/export/pdf/yearly';
+  let url = '/api/export/pdf';
+  if (type === 'monthly') url = '/api/export/pdf/monthly';
+  else if (type === 'yearly') url = '/api/export/pdf/yearly';
   const typeMap = { daily: 'Daily', monthly: 'Monthly', yearly: 'Yearly' };
 
   fetch(url, {
