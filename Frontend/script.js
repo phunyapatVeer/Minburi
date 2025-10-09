@@ -1,15 +1,12 @@
-let currentData = []; // เก็บข้อมูลที่ดึงมาจาก backend
-let chartInstance = null; // ตัวแปรสำหรับกราฟหลัก
-let chlorineChartInstance = null; // ตัวแปรสำหรับกราฟคลอรีน
-let flowChartInstance = null; // ตัวแปรสำหรับกราฟ flow
+let currentData = [];
+let chartInstance = null; // <-- ย้ายมาด้านบนสุด
+let chlorineChartInstance = null;
+let flowChartInstance = null;
 
 function getReport() {
-  // ดึง type และวันที่จาก input
   const type = document.getElementById('reportType').value;
   let date = '';
-  // สร้างรูปแบบวันที่ตาม type ที่เลือก
   if (type === 'daily') {
-    // ดึงวัน เดือน ปี สำหรับ daily
     let day = document.getElementById('reportDay').value;
     let month = document.getElementById('reportMonth').value;
     let year = document.getElementById('reportYear').value;
@@ -17,29 +14,24 @@ function getReport() {
     month = month.padStart(2, '0');
     date = `${year}-${month}-${day}`;
   } else if (type === 'monthly') {
-    // ดึงเดือน ปี สำหรับ monthly
     const month = document.getElementById('reportMonth').value;
     const year = document.getElementById('reportYear').value;
     date = `${year}-${month.padStart(2, '0')}-01`;
   } else if (type === 'yearly') {
-    // ดึงปี สำหรับ yearly
     date = document.getElementById('reportYear').value;
   }
 
-  // ถ้าไม่ได้เลือกข้อมูลครบ ให้แจ้งเตือน
   if (!date || !type) {
     alert("กรุณาเลือกข้อมูลให้ครบถ้วน");
     return;
   }
 
-  // ซ่อนปุ่มกราฟก่อนโหลดข้อมูล
-  document.getElementById('showChartBtn').style.display = 'none';
+  document.getElementById('showChartBtn').style.display = 'none'; // ซ่อนปุ่มก่อน
 
-  // ดึงข้อมูลจาก backend
-  fetch(`/api/ChlorineReport?date=${date}&type=${type}`)
+  fetch(`/ChlorineReport?date=${date}&type=${type}`)
     .then(res => res.json())
     .then(data => {
-      // เรียงข้อมูลตามเวลา
+      // เรียงข้อมูลตามเวลา (Time_Stamp, time, hour)
       data.sort((a, b) => {
         let ta = a.Time_Stamp || a.time || a.hour || '';
         let tb = b.Time_Stamp || b.time || b.hour || '';
@@ -55,11 +47,11 @@ function getReport() {
         return ta.localeCompare(tb);
       });
 
-      currentData = data; // เก็บข้อมูลไว้ใช้ต่อ
-      renderTable(data, type); // สร้างตารางข้อมูล
-      renderSummary(data); // สร้างตารางสรุปผลรวม
+      currentData = data;
+      renderTable(data, type);
+      renderSummary(data); // <<== เพิ่มบรรทัดนี้
 
-      // แสดงปุ่มกราฟและผลรวม
+      // แสดงปุ่มกราฟ
       document.getElementById('summary-total').style.display = '';
       document.getElementById('showChartBtn').style.display = '';
     })
@@ -67,7 +59,6 @@ function getReport() {
 }
 
 function renderTable(data, type) {
-  // สร้างหัวตารางและเติมข้อมูลในตารางตาม type (daily/monthly/yearly)
   const thead = document.querySelector('#reportTable thead');
   const tbody = document.querySelector('#reportTable tbody');
   thead.innerHTML = '';
@@ -79,7 +70,7 @@ function renderTable(data, type) {
   }
 
   if (type === 'daily') {
-    // สร้างหัวตารางและเติมข้อมูลสำหรับ daily
+    // หัวตาราง daily
     thead.innerHTML = `
       <tr style="background:#2563eb;color:#fff;">
         <th rowspan="2">ลำดับ</th>
@@ -220,7 +211,6 @@ thead.innerHTML = `
 }
 
 function formatNumber(value) {
-  // ฟังก์ชันแปลงตัวเลขให้มีทศนิยม 2 ตำแหน่ง
   return (Number(value) || 0).toLocaleString('en-US', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
@@ -228,9 +218,6 @@ function formatNumber(value) {
 }
 
 function renderSummary(data) {
-  // สร้างตารางสรุปสูงสุด ต่ำสุด เฉลี่ย และผลรวม
-  // สร้างตารางผลรวมเฉพาะ (รายวัน/เดือน/ปี) ที่ summary-total
-  // ใช้ label และ key ตาม type ที่เลือก
   if (!data || data.length === 0) {
     document.getElementById('summary').innerHTML = '';
     document.getElementById('summary-total').innerHTML = '';
@@ -328,9 +315,6 @@ document.getElementById('summary-total').innerHTML = totalHTML;
 }
 
 function exportExcel() {
-  // ส่งข้อมูลไป backend เพื่อ export Excel
-  // ตั้งชื่อไฟล์ตาม type ที่เลือก
-  // ดาวน์โหลดไฟล์ Excel
   if (currentData.length === 0) {
     alert("ไม่มีข้อมูลสำหรับ Export");
     return;
@@ -338,7 +322,7 @@ function exportExcel() {
   const type = document.getElementById('reportType').value;
   const typeMap = { daily: 'Daily', monthly: 'Monthly', yearly: 'Yearly' };
 
-  fetch('/api/export/excel', {
+  fetch('/export/excel', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ data: currentData, type })
@@ -360,17 +344,14 @@ function exportExcel() {
 }
 
 function exportPDF() {
-  // ส่งข้อมูลไป backend เพื่อ export PDF
-  // ตั้งชื่อไฟล์ตาม type ที่เลือก
-  // ดาวน์โหลดไฟล์ PDF
   if (!currentData || currentData.length === 0) {
     alert("ไม่มีข้อมูลสำหรับ Export");
     return;
   }
   const type = document.getElementById('reportType').value;
-  let url = '/api/export/pdf';
-  if (type === 'monthly') url = '/api/export/pdf/monthly';
-  else if (type === 'yearly') url = '/api/export/pdf/yearly';
+  let url = '/export/pdf';
+  if (type === 'monthly') url = '/export/pdf/monthly';
+  else if (type === 'yearly') url = '/export/pdf/yearly';
   const typeMap = { daily: 'Daily', monthly: 'Monthly', yearly: 'Yearly' };
 
   fetch(url, {
@@ -474,7 +455,6 @@ const found = data.find(row => {
 module.exports = exportChlorineReport;
 
 function showChart() {
-  // สร้างกราฟคลอรีนและกราฟ flow ตาม type ที่เลือก
   const type = document.getElementById('reportType').value;
   const data = currentData;
 
@@ -552,8 +532,6 @@ function showChart() {
 }
 
 function updateDateInput() {
-  // อัปเดตช่องเลือกวัน/เดือน/ปี ตาม type ที่เลือก
-  // เพิ่ม event listener สำหรับเปลี่ยนเดือน/ปี
   const type = document.getElementById('reportType').value;
   const group = document.getElementById('dateInputGroup');
   const today = new Date();
@@ -636,7 +614,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function showDateTH() {
-  // แสดงวันที่แบบไทยในหน้าเว็บ
   const dateStr = document.getElementById('reportDate').value;
   const span = document.getElementById('dateTH');
   if (!dateStr) {

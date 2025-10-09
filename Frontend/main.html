@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8"> <!-- กำหนด encoding เป็น UTF-8 -->
-  <title>รายงานคลอรีน</title> <!-- ชื่อหน้าเว็บ -->
-  <link rel="stylesheet" href="style.css"> <!-- ลิงก์ไฟล์ CSS หลัก -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"> <!-- ลิงก์ CSS ปฏิทิน -->
+  <meta charset="UTF-8">
+  <title>รายงานคลอรีน</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <style>
-    /* กำหนด style ตารางรายงาน */
     #reportTable {
       border-collapse: collapse;
       width: 100%;
@@ -26,10 +25,9 @@
   </style>
 </head>
 <body>
-  <!-- ส่วนแสดงชื่อผู้ใช้และปุ่ม logout -->
   <div style="position: absolute; top: 18px; right: 32px; display: flex; align-items: center; z-index:1000;">
     <span id="username" style="margin-right: 12px; color: #2563eb; font-size: 1rem; font-weight: 500; background: rgba(255,255,255,0.7); border-radius: 12px; padding: 0.3rem 1rem; border: 1px solid #2563eb;">
-      User: <span id="usernameText">กำลังโหลด...</span> <!-- แสดงชื่อผู้ใช้ -->
+      User: <span id="usernameText">กำลังโหลด...</span>
     </span>
     <button id="logoutBtn" onclick="logout()" style="
       background: rgba(255,255,255,0.7);
@@ -45,11 +43,10 @@
     "
     onmouseover="this.style.background='#2563eb';this.style.color='#fff';"
     onmouseout="this.style.background='rgba(255,255,255,0.7)';this.style.color='#2563eb';"
-    >Logout</button> <!-- ปุ่ม logout -->
+    >Logout</button>
   </div>
 
   <div class="report-container">
-    <!-- ส่วนหัวและตัวเลือกประเภทรายงาน -->
     <div class="header" style="display: flex; justify-content: space-between; align-items: center;">
       <div>
         <div class="image-container">
@@ -60,11 +57,11 @@ B9%8C%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%9B%E0%B8%B2%E0
 A3%E0%B8%B2%E0%B8%AA%E0%B8%B1%E0%B8%8D%E0%B8%A5%E0%B8%B1%E0%B8%81%E0%B8%A9%E0%B8%93%
 E0%B9%8C%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%9B%E0%B8%B2%E0%B
 8%99%E0%B8%84%E0%B8%A3%E0%B8%AB%E0%B8%A5%E0%B8%A7%E0%B8%87.svg.png?20220520144544" alt="img1" width="11%">
-          <img src="http://localhost:3000/Canvas02.png" alt="img2" width="55%"> <!-- โลโก้/ภาพประกอบ -->
+          <img src="http://localhost:3000/Canvas02.png" alt="img2" width="55%">
         </div>
       </div>
       <div class="right-controls">
-        <div id="dateInputGroup" style="display: none; gap: 0.5rem; align-items: center;"></div> <!-- ช่องเลือกวัน/เดือน/ปี -->
+        <div id="dateInputGroup" style="display: none; gap: 0.5rem; align-items: center;"></div>
         <label>ประเภท:
           <select id="reportType" onchange="updateDateInput()">
             <option value="" selected>เลือกประเภท</option>
@@ -74,14 +71,13 @@ E0%B9%8C%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%9B%E0%B8%B2
           </select>
         </label>
         <div class="button-group">
-          <button onclick="getReport()">ค้นหา</button> <!-- ปุ่มค้นหา -->
-          <button onclick="exportExcel()">Export Excel</button> <!-- ปุ่ม export excel -->
-          <button onclick="exportPDF()">Export PDF</button> <!-- ปุ่ม export pdf -->
+          <button onclick="getReport()">ค้นหา</button>
+          <button onclick="exportExcel()">Export Excel</button>
+          <button onclick="exportPDF()">Export PDF</button>
         </div>
       </div>
     </div>
 
-    <!-- ส่วนแสดงตารางข้อมูลรายงาน -->
     <div class="table-wrapper">
       <table id="reportTable" class="styled-table">
         <thead>
@@ -100,18 +96,18 @@ E0%B9%8C%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%9B%E0%B8%B2
             <th style="width:45px">ขาออกสถานี</th>
           </tr>
         </thead>
-        <tbody></tbody> <!-- ข้อมูลตารางจะถูกเติมโดย JS -->
+        <tbody></tbody>
       </table>
     </div>
     <div style="display: flex; align-items: flex-end; gap: 1.5rem; margin-bottom: 1.5rem;">
-      <!-- พื้นที่ว่างสำหรับเนื้อหาอื่น (ถ้ามี) -->
+      <!-- (ถ้ามีเนื้อหาอื่นใส่ไว้ตรงนี้ หรือเว้นว่างไว้ได้) -->
     </div>
 
     <!-- กล่องรวมผลสรุป -->
     <div id="summary-container" style="margin-top: 1.5rem;">
-      <div id="summary"></div> <!-- ตารางสรุปสูงสุด/ต่ำสุด/เฉลี่ย -->
+      <div id="summary"></div>
       <div id="summary-total" style="margin-top: 2rem; text-align: left; display:none;">
-        <span style="font-weight:bold;">อัตราการไหลของน้ำขาเข้า รวม (m³)</span> <!-- สรุปผลรวม -->
+        <span style="font-weight:bold;">อัตราการไหลของน้ำขาเข้า รวม (m³)</span>
       </div>
       <button id="showChartBtn" onclick="showChart()" 
         style="display:none;
@@ -123,23 +119,21 @@ E0%B9%8C%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%9B%E0%B8%B2
         onmouseout="this.style.background='#2563eb';"
       >
         แสดงกราฟ
-      </button> <!-- ปุ่มแสดงกราฟ -->
+      </button>
     </div>
 
-    <!-- กราฟคลอรีนและกราฟ flow -->
     <canvas id="chlorineChart" width="900" height="350"></canvas>
     <canvas id="flowChart" width="900" height="350" style="margin-top:2rem;"></canvas>
 
-    <!-- โหลดไลบรารี Chart.js และ flatpickr -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="script.js"></script> <!-- สคริปต์หลักของหน้าเว็บ -->
+    <script src="script.js"></script>
     <script>
-      function logout() {
-        window.location.href = 'login.html'; // ฟังก์ชัน logout
-      }
-      // ดึงชื่อผู้ใช้จาก sessionStorage มาแสดง
-      document.getElementById('usernameText').textContent = sessionStorage.getItem('username') || 'ไม่ระบุชื่อ';
-    </script>
+  function logout() {
+    window.location.href = 'login.html';
+  }
+  // ดึงชื่อผู้ใช้จาก sessionStorage มาแสดง
+  document.getElementById('usernameText').textContent = sessionStorage.getItem('username') || 'ไม่ระบุชื่อ';
+  </script>
 </body>
 </html>
