@@ -1,0 +1,5 @@
+ID          Date_Stamp       Time_Stamp MB_Flow_Chlorine_Line1 MB_Chlorine_Inlet MB_Chlorine_Outlet Expr1          MB_Flow_Chlorine_Line2 MB_Flow_Chlorine_Line3 MB_Flow_Water_Inlet MB_Total_Flow_Chlorine MB_Level_Chlorine_Tank MB_Volume_Chlorine_Tank Chlorine_Per_Hour DT_Stamp               
+----------- ---------------- ---------- ---------------------- ----------------- ------------------ -------------- ---------------------- ---------------------- ------------------- ---------------------- ---------------------- ----------------------- ----------------- -----------------------
+      19954       2025-01-28 02:00                   42.200001        0.66000003          1.4400001      42.200001              55.799999              47.200001             17686.0                  145.2              1.5700001                  4452.5             126.5 2025-01-28 02:00:00.000
+
+(1 rows affected)

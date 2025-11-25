@@ -204,4 +204,8 @@ label {
   background-color: #eef5ff;
 }
 
+/* Ensure top-right username/logout use the same font as the login page */
+#username, #logoutBtn, #editUserBtn {
+  font-family: Tahoma, sans-serif;
+}
 

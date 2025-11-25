@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <title>Test API Connection</title>
+  <style>
+    body { font-family: Tahoma, sans-serif; padding: 2rem; background: #f5f5f5; }
+    .container { max-width: 900px; margin: 0 auto; background: white; padding: 2rem; border-radius: 8px; }
+    button { background: #2563eb; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; margin: 5px; }
+    pre { background: #f9f9f9; padding: 1rem; border-radius: 4px; overflow-x: auto; border: 1px solid #ddd; }
+    .error { color: #e3342f; }
+    .success { color: #38c172; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔍 ทดสอบการเชื่อมต่อ API และฐานข้อมูล</h1>
+    
+    <h2>1. ทดสอบ Debug Endpoint</h2>
+    <button onclick="testDebug()">เรียก /api/debug/test-db</button>
+    <pre id="debug-result">คลิกปุ่มข้างบนเพื่อดูผลลัพธ์...</pre>
+
+    <h2>2. ทดสอบ GET /api/users</h2>
+    <button onclick="testGetUsers()">เรียก GET /api/users</button>
+    <pre id="users-result">คลิกปุ่มข้างบนเพื่อดูผลลัพธ์...</pre>
+
+    <h2>3. ทดสอบ POST /api/users (สร้างผู้ใช้ทดสอบ)</h2>
+    <button onclick="testCreateUser()">สร้างผู้ใช้ test123</button>
+    <pre id="create-result">คลิกปุ่มข้างบนเพื่อดูผลลัพธ์...</pre>
+
+    <h2>4. ตั้งค่า Role ในฐานข้อมูล ⚙️</h2>
+    <button onclick="setupRoles()" style="background:#f59e0b;">ตั้งค่า Role (Administrator = Admin)</button>
+    <pre id="setup-result">คลิกปุ่มข้างบนเพื่อเพิ่มคอลัมน์ role และตั้งค่า Administrator เป็น Admin</pre>
+  </div>
+
+  <script>
+    async function testDebug() {
+      const el = document.getElementById('debug-result');
+      el.textContent = 'กำลังโหลด...';
+      try {
+        const res = await fetch('/api/debug/test-db');
+        const data = await res.json();
+        el.className = res.ok ? 'success' : 'error';
+        el.textContent = JSON.stringify(data, null, 2);
+      } catch (err) {
+        el.className = 'error';
+        el.textContent = 'Error: ' + err.message;
+      }
+    }
+
+    async function testGetUsers() {
+      const el = document.getElementById('users-result');
+      el.textContent = 'กำลังโหลด...';
+      try {
+        const res = await fetch('/api/users');
+        const text = await res.text();
+        el.className = res.ok ? 'success' : 'error';
+        el.textContent = `Status: ${res.status}\n\n${text}`;
+      } catch (err) {
+        el.className = 'error';
+        el.textContent = 'Error: ' + err.message;
+      }
+    }
+
+    async function testCreateUser() {
+      const el = document.getElementById('create-result');
+      el.textContent = 'กำลังโหลด...';
+      try {
+        const res = await fetch('/api/users', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: 'test123',
+            password: 'test123',
+            role: 'Normal User'
+          })
+        });
+        const text = await res.text();
+        el.className = res.ok ? 'success' : 'error';
+        el.textContent = `Status: ${res.status}\n\n${text}`;
+      } catch (err) {
+        el.className = 'error';
+        el.textContent = 'Error: ' + err.message;
+      }
+    }
+
+    async function setupRoles() {
+      const el = document.getElementById('setup-result');
+      el.textContent = 'กำลังตั้งค่า...';
+      try {
+        const res = await fetch('/api/debug/setup-roles', { method: 'POST' });
+        const data = await res.json();
+        el.className = res.ok ? 'success' : 'error';
+        el.textContent = JSON.stringify(data, null, 2);
+        if (res.ok) {
+          alert('✅ ตั้งค่า Role สำเร็จ! กรุณา Logout แล้ว Login ใหม่');
+        }
+      } catch (err) {
+        el.className = 'error';
+        el.textContent = 'Error: ' + err.message;
+      }
+    }
+  </script>
+</body>
+</html>

@@ -4,50 +4,77 @@
   <meta charset="UTF-8">
   <title>เข้าสู่ระบบ</title>
   <style>
-    /* ส่วนตกแต่งหน้าตา login box, input, button, โลโก้ */
-    body { font-family: Tahoma, sans-serif; padding: 1rem; background: #f0f8ff; }
+  body { font-family: Tahoma, sans-serif; padding: 1rem; background-color: #f0f8ff; background-image: url('background.png'); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed; display:flex; align-items:center; justify-content:center; min-height:100vh; }
     .login-box {
-      max-width: 340px;
-      margin: 30px auto;
+      width: 38%;
+      max-width: 620px; /* fit the header without enlarging logos */
+      margin: 20px;
       background: #fff;
-      padding: 1.2rem 1rem 1rem 1rem;
+      padding: 1.6rem 1.6rem 1.2rem 1.6rem;
       border-radius: 12px;
-      box-shadow: 0 0 14px #b7e1ff;
+      box-shadow: 0 0 18px #b7e1ff;
+      box-sizing: border-box; /* ensure padding doesn't cause overflow */
+      text-align: center;
     }
-    .login-logo {
-      display: block;
-      margin: 0 auto 1.2rem auto;
-      max-width: 300px;
-      width: 100%;
+    /* logo row: main prapa logo + canvas image side-by-side */
+    .logo-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 0.8rem;
+      flex-wrap: nowrap; /* keep Canvas03 beside the main logo on wider screens */
+    }
+    /* ensure both images share the same visible height so they match visually */
+    .logo-row img { display:block; object-fit:contain; }
+    .logo-icon, .logo-canvas {
+      max-height: 130px;     /* limit height so logos won't get bigger */
       height: auto;
+      width: auto;           /* keep original aspect ratio */
+      max-width: 100%;
+      flex: 0 0 auto;
       filter: drop-shadow(0 0 10px #b7e1ff88);
-      transition: transform 0.2s;
+      transition: transform 0.15s;
     }
-    .login-logo:hover {
-      transform: scale(1.07);
+    /* explicit caps to keep images from growing too wide */
+    .logo-icon { max-width: 160px; }
+    .logo-canvas { max-width: 380px; }
+    .logo-icon:hover, .logo-canvas:hover { transform: scale(1.03); }
+    /* on narrow screens stack logos */
+    @media (max-width: 480px) {
+      .logo-row { flex-direction: column; gap: 8px; }
+      .logo-canvas, .logo-icon { height: 100px; width: auto; max-width: 260px; }
+      .login-box { padding-top: 1.2rem; }
     }
     h2 {
       text-align: center;
       margin-bottom: 1rem;
       font-size: 1.2rem;
     }
-    input {
-      width: 100%;
-      padding: 0.5rem;
-      margin: 0.4rem 0;
+    /* make form fields shorter horizontally and centered */
+    .login-box form input {
+      display: block;
+      width: 60%;          /* shorter horizontally */
+      max-width: 520px;    /* cap on wide screens */
+      padding: 0.35rem 0.5rem;
+      margin: 0.4rem auto; /* center inside the box */
       border-radius: 4px;
       border: 1px solid #b7e1ff;
       font-size: 0.95rem;
+      box-sizing: border-box;
+      line-height: 1.1;
     }
-    button {
-      width: 100%;
-      padding: 0.5rem;
+    .login-box form button {
+      display: block;
+      width: 48%;         /* shorter horizontally, centered */
+      max-width: 420px;
+      padding: 0.45rem;
       background: #4faaff;
       color: #fff;
       border: none;
       border-radius: 4px;
-      font-size: 1rem;
-      margin-top: 0.3rem;
+      font-size: 0.98rem;
+      margin: 0.6rem auto 0 auto;
       cursor: pointer;
       transition: background 0.2s;
     }
@@ -64,28 +91,22 @@
 </head>
 <body>
   <div class="login-box">
-    <!-- โลโก้ประปา -->
-    <img src="prapa.png" alt="โลโก้ประปา" class="login-logo">
-    <!-- หัวข้อเข้าสู่ระบบ -->
+    <div class="logo-row">
+      <img src="prapa02.png" alt="โลโก้ประปา" class="logo-icon">
+      <img src="Canvas03.png" alt="Canvas" class="logo-canvas">
+    </div>
     <h2>เข้าสู่ระบบ</h2>
-    <!-- ฟอร์ม login -->
     <form id="loginForm">
-      <!-- ช่องกรอกชื่อผู้ใช้ -->
       <input type="text" name="username" id="usernameInput" placeholder="ชื่อผู้ใช้" required>
-      <!-- ช่องกรอกรหัสผ่าน -->
       <input type="password" name="password" placeholder="รหัสผ่าน" required>
-      <!-- ปุ่มเข้าสู่ระบบ -->
       <button type="submit">เข้าสู่ระบบ</button>
     </form>
-    <!-- แสดงข้อความ error หรือผลลัพธ์ login -->
     <div id="msg"></div>
   </div>
   <script>
-    // ส่วนนี้จัดการ submit ฟอร์ม login
     document.getElementById('loginForm').onsubmit = async function(e) {
-      e.preventDefault(); // ป้องกันการ reload หน้า
+      e.preventDefault();
       const form = e.target;
-      // ส่งข้อมูล username/password ไป backend (/login)
       const res = await fetch('/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -96,12 +117,13 @@
       });
       const result = await res.json();
       if (result.success) {
-        // ถ้า login สำเร็จ เก็บ username ใน sessionStorage และไปหน้า main.html
         const username = document.getElementById('usernameInput').value;
+        const role = result.user?.role || 'Normal User';
+        // Store username and role
         sessionStorage.setItem('username', username);
+        sessionStorage.setItem('role', role);
         window.location.href = 'main.html';
       } else {
-        // ถ้า login ไม่สำเร็จ แสดงข้อความ error
         document.getElementById('msg').innerText = result.message || 'เข้าสู่ระบบไม่สำเร็จ';
       }
     };

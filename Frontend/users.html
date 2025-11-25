@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <title>จัดการผู้ใช้</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { 
+      font-family: Tahoma, sans-serif; 
+      padding: 1rem; 
+      background: #f0f8ff; 
+      background-image: url('background.png'); 
+      background-size: cover; 
+      background-position: center; 
+      background-repeat: no-repeat; 
+      background-attachment: fixed;
+    }
+    .container { 
+      max-width: 1200px; 
+      margin: 1.5rem auto; 
+      background: rgba(255, 255, 255, 0.95); 
+      padding: 1rem 1.2rem; 
+      border-radius: 12px; 
+      box-shadow: 0 0 18px #b7e1ff;
+    }
+    .logo-row {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 10px;
+      margin-bottom: 1rem;
+      flex-wrap: nowrap;
+    }
+    .logo-row img { 
+      display:block; 
+      object-fit:contain; 
+      filter: drop-shadow(0 0 10px #b7e1ff88);
+      transition: transform 0.15s;
+    }
+    .logo-icon { max-height: 100px; max-width: 130px; }
+    .logo-canvas { max-height: 100px; max-width: 350px; }
+    .logo-icon:hover, .logo-canvas:hover { transform: scale(1.03); }
+    @media (max-width: 768px) {
+      .logo-row { flex-direction: column; gap: 8px; }
+      .logo-canvas, .logo-icon { height: 80px; width: auto; max-width: 220px; }
+    }
+    h2 { margin: 0 0 1rem 0; text-align: center; color: #2563eb; }
+    .top-actions { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:12px; }
+    .user-table { width:100%; border-collapse: collapse; }
+    .user-table th, .user-table td { border:1px solid #e3e8ef; padding:8px 10px; text-align:left; }
+    .user-table thead th { background:#2563eb; color:#fff; }
+    .form-row { display:flex; gap:8px; align-items:center; }
+    .form-row input, .form-row select { padding:6px 8px; border:1px solid #d0dbef; border-radius:6px; }
+    .btn { background:#2563eb; color:#fff; border:none; padding:8px 12px; border-radius:6px; cursor:pointer; }
+    .btn.danger { background:#dc2626 !important; }
+    .small { font-size:0.95rem; padding:6px 8px; background:#2563eb; color:#fff; border:none; border-radius:6px; cursor:pointer; }
+    .small.danger { background:#dc2626 !important; }
+    .note { color:#666; font-size:0.92rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo-row">
+      <img src="prapa02.png" alt="โลโก้ประปา" class="logo-icon">
+      <img src="Canvas03.png" alt="Canvas" class="logo-canvas">
+    </div>
+    
+    <div class="top-actions">
+      <h2>จัดการผู้ใช้ (User Management)</h2>
+      <div>
+        <button class="btn" onclick="location.href='main.html'">กลับไปหน้าแรก</button>
+      </div>
+    </div>
+
+    <div style="margin-bottom: 14px;">
+      <form id="addUserForm" onsubmit="event.preventDefault(); addUser();">
+        <div class="form-row">
+          <input id="newUsername" placeholder="ชื่อผู้ใช้" required>
+          <input id="newPassword" type="text" placeholder="รหัสผ่าน" required>
+          <select id="newRole">
+            <option value="Normal User">Normal User</option>
+            <option value="Admin">Admin</option>
+          </select>
+          <button class="btn small" type="submit">เพิ่มผู้ใช้</button>
+        </div>
+      </form>
+    </div>
+
+    <table class="user-table" id="usersTable">
+      <thead>
+        <tr><th>ลำดับ</th><th>ชื่อผู้ใช้ (Username)</th><th>รหัสผ่าน (Password)</th><th>บทบาท (Role)</th><th>การกระทำ</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script>
+    // Require Administrator or Admin role to view/edit this page
+    const currentUser = sessionStorage.getItem('username') || '';
+    const currentRole = sessionStorage.getItem('role') || '';
+    if (currentUser !== 'Administrator' && currentRole !== 'Admin') {
+      alert('สิทธิ์เข้าใช้ถูกจำกัด: ต้องเป็น Administrator หรือมี Role = Admin เท่านั้น');
+      location.href = 'main.html';
+    }
+
+    // Fetch users from backend API
+    async function fetchUsers() {
+      try {
+        const res = await fetch('/api/users');
+        if (!res.ok) throw new Error('ไม่สามารถดึงข้อมูลผู้ใช้ได้');
+        return await res.json();
+      } catch (err) {
+        alert(err.message || 'Error fetching users');
+        return [];
+      }
+    }
+
+    async function render() {
+      const tbody = document.querySelector('#usersTable tbody');
+      tbody.innerHTML = '';
+      const users = await fetchUsers();
+      users.forEach((u, i) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style="width:60px">${i+1}</td>
+          <td>${u.username}</td>
+          <td>${u.password}</td>
+          <td>${u.role || 'Normal User'}</td>
+          <td style="white-space:nowrap">
+            <button class="small danger" onclick="deleteUser(${i})">ลบ</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function addUser() {
+      const username = document.getElementById('newUsername').value.trim();
+      const password = document.getElementById('newPassword').value;
+      const role = document.getElementById('newRole').value;
+      if (!username || !password) return alert('กรุณากรอกชื่อผู้ใช้และรหัสผ่าน');
+      try {
+        const res = await fetch('/api/users', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password, role })
+        });
+        if (res.status === 409) return alert('ชื่อผู้ใช้นี้มีอยู่แล้ว');
+        if (!res.ok) throw new Error('เกิดข้อผิดพลาดขณะสร้างผู้ใช้');
+        document.getElementById('addUserForm').reset();
+        await render();
+      } catch (err) {
+        alert(err.message || 'Error creating user');
+      }
+    }
+
+    async function deleteUser(index) {
+      const users = await fetchUsers();
+      const u = users[index];
+      if (!u) return alert('ไม่พบผู้ใช้นี้');
+      if (!confirm(`ยืนยันการลบผู้ใช้ ${u.username} ?`)) return;
+      try {
+        const res = await fetch(`/api/users/${encodeURIComponent(u.username)}`, { method: 'DELETE' });
+        if (res.status === 400) {
+          const body = await res.json();
+          return alert(body.error || 'ไม่สามารถลบผู้ใช้ได้');
+        }
+        if (!res.ok) throw new Error('เกิดข้อผิดพลาดขณะลบผู้ใช้');
+        await render();
+      } catch (err) {
+        alert(err.message || 'Error deleting user');
+      }
+    }
+
+    // initial render
+    render();
+  </script>
+</body>
+</html>
