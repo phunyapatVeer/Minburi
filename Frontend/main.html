@@ -27,6 +27,10 @@
 <body>
   <div style="position: absolute; top: 18px; right: 32px; display: flex; align-items: center; z-index:1000; gap:8px;">
     <span id="username" style="margin-right: 4px; color: #2563eb; font-size: 1rem; font-weight: 500; background: rgba(255,255,255,0.7); border-radius: 12px; padding: 0.3rem 1rem; border: 1px solid #2563eb;">
+=======
+  <div style="position: absolute; top: 18px; right: 32px; display: flex; align-items: center; z-index:1000;">
+    <span id="username" style="margin-right: 12px; color: #2563eb; font-size: 1rem; font-weight: 500; background: rgba(255,255,255,0.7); border-radius: 12px; padding: 0.3rem 1rem; border: 1px solid #2563eb;">
+>>>>>>> 05f481648c6792583e87b80e52887b4b2d6fa056
       User: <span id="usernameText">กำลังโหลด...</span>
     </span>
   <button id="editUserBtn" onclick="location.href='users.html'" style="display:none; background: rgba(255,255,255,0.9); color: #2563eb; border: 1px solid #2563eb; border-radius: 16px; padding: 0.25rem 0.8rem; font-size: 0.95rem; cursor: pointer;">Edit User</button>
@@ -52,7 +56,18 @@
       <div>
         <div class="image-container">
           <img src="http://localhost:3000/prapa02.png" alt="img1" width="10%">
+          <img src="http://localhost:3000/prapa02.png" alt="img1" width="10%">
           <img src="http://localhost:3000/Canvas03.png" alt="img2" width="50%">
+=======
+          <img src="https://upload.wikimedia.org/wikipedia/th/thumb/4/48/%E0%B8%95%E0%B8%A3%
+E0%B8%B2%E0%B8%AA%E0%B8%B1%E0%B8%8D%E0%B8%A5%E0%B8%B1%E0%B8%81%E0%B8%A9%E0%B8%93%E0%
+B9%8C%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%9B%E0%B8%B2%E0%B8%
+99%E0%B8%84%E0%B8%A3%E0%B8%AB%E0%B8%A5%E0%B8%A7%E0%B8%87.svg/450px-%E0%B8%95%E0%B8%
+A3%E0%B8%B2%E0%B8%AA%E0%B8%B1%E0%B8%8D%E0%B8%A5%E0%B8%B1%E0%B8%81%E0%B8%A9%E0%B8%93%
+E0%B9%8C%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%9B%E0%B8%B2%E0%B
+8%99%E0%B8%84%E0%B8%A3%E0%B8%AB%E0%B8%A5%E0%B8%A7%E0%B8%87.svg.png?20220520144544" alt="img1" width="11%">
+          <img src="http://localhost:3000/Canvas02.png" alt="img2" width="55%">
+>>>>>>> 05f481648c6792583e87b80e52887b4b2d6fa056
         </div>
       </div>
       <div class="right-controls">
@@ -122,6 +137,7 @@
       </button>
     </div>
 
+<<<<<<< HEAD
     <!-- กราฟแสดง 2 อันต่อบรรทัด (ซ่อนไว้ก่อน) -->
     <div id="chartContainer" style="display: none; grid-template-columns: repeat(2, 1fr); gap: 2rem; margin-top: 2rem;">
       <div style="border: 1px solid #ddd; padding: 1rem; border-radius: 8px; background: #f9f9f9;">
@@ -145,12 +161,17 @@
         <canvas id="chlorineStockChart"></canvas>
       </div>
     </div>
+=======
+    <canvas id="chlorineChart" width="900" height="350"></canvas>
+    <canvas id="flowChart" width="900" height="350" style="margin-top:2rem;"></canvas>
+>>>>>>> 05f481648c6792583e87b80e52887b4b2d6fa056
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="script.js"></script>
     <script>
+<<<<<<< HEAD
     function logout() {
       // Simple logout: clear username and redirect
       sessionStorage.removeItem('username');
@@ -194,5 +215,13 @@
       </div>
     </div>
 
+=======
+  function logout() {
+    window.location.href = 'login.html';
+  }
+  // ดึงชื่อผู้ใช้จาก sessionStorage มาแสดง
+  document.getElementById('usernameText').textContent = sessionStorage.getItem('username') || 'ไม่ระบุชื่อ';
+  </script>
+>>>>>>> 05f481648c6792583e87b80e52887b4b2d6fa056
 </body>
 </html>

@@ -3,7 +3,11 @@ const express = require('express');
 const sql = require('mssql');
 const cors = require('cors');
 const path = require('path');
+<<<<<<< HEAD
 const ExcelJS = require('exceljs'); // Updated ExcelJS import
+=======
+const ExcelJS = require('exceljs');
+>>>>>>> 05f481648c6792583e87b80e52887b4b2d6fa056
 const PDFDocument = require('pdfkit');
 const fs = require('fs');
 
@@ -40,9 +44,13 @@ function formatNumber(val) {
 
 // -------------------- [2] API: GET DATA --------------------
 app.get('/ChlorineReport', async (req, res) => {
+<<<<<<< HEAD
   const { date, type, endDate } = req.query;
   console.log('Request params:', { date, type, endDate }); // Debug log
   
+=======
+  const { date, type } = req.query;
+>>>>>>> 05f481648c6792583e87b80e52887b4b2d6fa056
   if (!date || !type) return res.status(400).send('Missing parameters');
 
   const d = new Date(date);
@@ -102,6 +110,7 @@ app.get('/ChlorineReport', async (req, res) => {
   
   console.log('Generated query:', query); // Debug log
 
+<<<<<<< HEAD
     try {
     await sql.connect(config);
     const result = await sql.query(query);
@@ -117,6 +126,11 @@ app.get('/ChlorineReport', async (req, res) => {
       });
       return res.json(converted);
     }
+=======
+  try {
+    await sql.connect(config);
+    const result = await sql.query(query);
+>>>>>>> 05f481648c6792583e87b80e52887b4b2d6fa056
     res.json(result.recordset);
   } catch (err) {
     console.error('Database error:', err);
@@ -127,6 +141,7 @@ app.get('/ChlorineReport', async (req, res) => {
 // -------------------- [3] EXPORT EXCEL --------------------
 app.post('/export/excel', async (req, res) => {
   const data = req.body.data || [];
+<<<<<<< HEAD
   const type = req.body.type || 'daily';
   
   // แยกการ export ระหว่าง Query modes กับ Normal modes
@@ -503,18 +518,29 @@ async function exportExcelNormal(req, res, data, type) {
   const workbook = new ExcelJS.Workbook();
   const sheet = workbook.addWorksheet('Chlorine Report');
 
+=======
+  const type = req.body.type || 'daily'; // <<== เพิ่มตรงนี้
+  const workbook = new ExcelJS.Workbook();
+  const sheet = workbook.addWorksheet('Chlorine Report');
+
+>>>>>>> 05f481648c6792583e87b80e52887b4b2d6fa056
  // ===== ใส่โลโก้ที่มุมซ้ายบน =====
   if (fs.existsSync(logoPath)) {
     let logoWidth = 110, logoHeight = 100;
     if (type === 'daily' || type === 'query') {
       logoWidth = 95; logoHeight = 75;
+<<<<<<< HEAD
     } else if (type === 'monthly' || type === 'queryMonthly') {
       logoWidth = 95; logoHeight = 75;
     } else if (type === 'yearly' || type === 'queryYearly') {
+=======
+    } else if (type === 'monthly') {
+      logoWidth = 95; logoHeight = 75;
+    } else if (type === 'yearly') {
+>>>>>>> 05f481648c6792583e87b80e52887b4b2d6fa056
       logoWidth = 95; logoHeight = 75; // เพิ่มขนาดโลโก้สำหรับรายปี
     }
     const imageId = workbook.addImage({
-      filename: logoPath,
       extension: 'png',
     });
     sheet.addImage(imageId, {
@@ -555,7 +581,6 @@ async function exportExcelNormal(req, res, data, type) {
       reportDate = `รายการข้อมูล: วันที่ ${d.getDate()} เดือน ${thaiMonths[d.getMonth()]} พ.ศ. ${d.getFullYear() + 543}`;
     } else if (type === 'query' && data[0].Date_Stamp && data[data.length-1].Date_Stamp) {
       const startD = new Date(data[0].Date_Stamp);
-      const endD = new Date(data[data.length-1].Date_Stamp);
       const thaiMonths = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
         'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
       reportDate = `รายการข้อมูล: วันที่ ${startD.getDate()} ${thaiMonths[startD.getMonth()]} ${startD.getFullYear() + 543} ถึง ${endD.getDate()} ${thaiMonths[endD.getMonth()]} ${endD.getFullYear() + 543}`;
@@ -599,11 +624,21 @@ async function exportExcelNormal(req, res, data, type) {
   sheet.getCell('A2').font = { name: 'Calibri', size: 11, bold: false }; // 8 → 11
   sheet.getCell('A2').alignment = { horizontal: 'left', vertical: 'middle' };
 
+<<<<<<< HEAD
   if (type === 'monthly' || type === 'queryMonthly') {
     sheet.mergeCells('A3:K3');
   } else {
     sheet.mergeCells('A3:L3');
   }
+=======
+  // ===== เพิ่มวันที่ส่งออก (A3) =====
+  const now = new Date();
+  const exportDate = `วันที่ส่งออก: ${now.toLocaleDateString('th-TH')} เวลา: ${now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })}`;
+  sheet.mergeCells('A3:J3');
+  sheet.getCell('A3').value = exportDate;
+  sheet.getCell('A3').font = { name: 'Calibri', size: 9, bold: false }; // 6.4 → 9
+  sheet.getCell('A3').alignment = { horizontal: 'left', vertical: 'middle' };
+>>>>>>> 05f481648c6792583e87b80e52887b4b2d6fa056
 
   // ===== หัวตาราง (แยกตาม type) =====
   let headers, columnWidths;
@@ -639,7 +674,11 @@ async function exportExcelNormal(req, res, data, type) {
       'ปริมาณคลอรีนในถังเก็บ (Litr)',
       'ปริมาณการใช้คลอรีน รายวัน (Litr)'
     ];
+<<<<<<< HEAD
     columnWidths = [2, 16, 16, 14, 14, 14, 13, 13, 12, 14];
+=======
+    columnWidths = [15, 14, 14, 13, 13, 13, 13, 14, 13];
+>>>>>>> 05f481648c6792583e87b80e52887b4b2d6fa056
   }
 
   else  {
@@ -672,8 +711,20 @@ async function exportExcelNormal(req, res, data, type) {
     sheet.getColumn(i + 2).width = w;
   });
 
+<<<<<<< HEAD
 const headerRow = sheet.getRow(4);
 headerRow.height = 40; // ปรับความสูงแถวที่ 4 ให้สูงขึ้น เช่น 22
+=======
+  const headerRow = sheet.getRow(4);
+  headerRow.eachCell((cell) => {
+    cell.font = { name: 'Calibri', size: 5, bold: true }; // 8 → 7 และ bold (ย่อฟอนต์หัวตาราง)
+    cell.alignment = { horizontal: 'center', vertical: 'middle' };
+    cell.border = {
+      top: { style: 'thin' }, left: { style: 'thin' },
+      bottom: { style: 'thin' }, right: { style: 'thin' }
+    };
+  });
+>>>>>>> 05f481648c6792583e87b80e52887b4b2d6fa056
 
 headerRow.eachCell((cell) => {
   cell.font = { name: 'Calibri', size: 8, bold: true }; // ปรับขนาดตัวหนังสือใหญ่ขึ้น เช่น 12
@@ -1165,6 +1216,11 @@ headerRow.eachCell((cell) => {
     sheet.getColumn('C').width = 15;
   }
 
+// ปรับความกว้างคอลัมน์ A และ B ให้เหมาะกับข้อความ
+sheet.getColumn('A').width = 22;
+sheet.getColumn('B').width = 13;
+
+
   // ===== ส่งไฟล์ =====
   const typeFileNames = {
     daily: 'Daily',
@@ -1179,8 +1235,16 @@ headerRow.eachCell((cell) => {
   res.setHeader('Content-Disposition', `attachment; filename=${fileName}`);
   await workbook.xlsx.write(res);
   res.end();
+<<<<<<< HEAD
 }
 // -------------------- [4] EXPORT PDF Daily --------------------
+=======
+});
+
+
+
+// -------------------- [4] EXPORT PDF --------------------
+>>>>>>> 05f481648c6792583e87b80e52887b4b2d6fa056
 app.post('/export/pdf', async (req, res) => {
   // --- [4.1] เตรียม PDF ---
   const data = req.body.data;
@@ -1295,6 +1359,7 @@ doc.moveDown(0); // ปรับห่างจาก header ให้พอเ�
           return row.Time_Stamp;
         } catch { return row.Time_Stamp || '-'; }
       })(),
+<<<<<<< HEAD
       row.MB_Chlorine_Inlet?.toLocaleString('en-US', { minimumFractionDigits: 2 }) ?? '-',
       row.MB_Chlorine_Outlet?.toLocaleString('en-US', { minimumFractionDigits: 2 }) ?? '-',
       row.MB_Flow_Chlorine_Line1?.toLocaleString('en-US', { minimumFractionDigits: 2 }) ?? '-',
@@ -1305,6 +1370,16 @@ doc.moveDown(0); // ปรับห่างจาก header ให้พอเ�
       row.MB_Volume_Chlorine_Tank?.toLocaleString('en-US', { minimumFractionDigits: 2 }) ?? '-',
       row.MB_Total_Flow_Chlorine?.toLocaleString('en-US', { minimumFractionDigits: 2 }) ?? '-',
       row.Chlorine_Per_Hour?.toLocaleString('en-US', { minimumFractionDigits: 2 }) ?? '-'
+=======
+      row.Chlorine_Inlet?.toLocaleString('en-US', { minimumFractionDigits: 2 }) ?? '-' ?? '-',
+      row.Chlorine_Outlet?.toLocaleString('en-US', { minimumFractionDigits: 2 }) ?? '-' ?? '-',
+      row.Flow_Water_Inlet?.toLocaleString('en-US', { minimumFractionDigits: 2 }) ?? '-' ?? '-',
+      row.Total_Flow_Chlorine?.toLocaleString('en-US', { minimumFractionDigits: 2 }) ?? '-' ?? '-',
+      row.Level_Chlorine_Tank?.toLocaleString('en-US', { minimumFractionDigits: 2 }) ?? '-' ?? '-',
+      row.Volume_Chlorine_Tank?.toLocaleString('en-US', { minimumFractionDigits: 2 }) ?? '-' ?? '-',
+      // row.TOT_Chlorine_Line1?.toFixed(2) ?? '-', // <<== ลบบรรทัดนี้ออก
+      row.Chlorine_Per_Hour?.toLocaleString('en-US', { minimumFractionDigits: 2 }) ?? '-' // ถ้ามี field นี้
+>>>>>>> 05f481648c6792583e87b80e52887b4b2d6fa056
     ];
     const cellHeight = 9.375 * 1.3 * 1.5 * mainScale;
     const fontSize = 3.75 * 1.3 * 1.5 * mainScale;
@@ -1467,6 +1542,9 @@ totalOnlyKeys.forEach(item => {
   
 
 
+  
+
+
   // --- [4.10] END PDF & RESPONSE ---
   doc.end();
 
@@ -1582,6 +1660,7 @@ doc.moveDown(0); // ปรับห่างจาก header ให้พอเ�
 // วาดข้อมูลในตาราง
 data.forEach((row, index) => {
   x = startX;
+<<<<<<< HEAD
   const values = [
     new Date(row.Date_Stamp).toLocaleDateString('th-TH'),
     row.MB_Chlorine_Inlet?.toLocaleString('en-US', { minimumFractionDigits: 2 }) ?? '-',
@@ -1618,6 +1697,43 @@ data.forEach((row, index) => {
 
   // ตรวจสอบว่าจะขึ้นหน้าใหม่ไหม (ปล่อยให้ขึ้นหน้าใหม่อัตโนมัติได้ทุกหน้า)
 if (y > doc.page.height - 50) { // เหลือพื้นที่น้อยกว่า 50 points ก็ขึ้นหน้าใหม่
+=======
+
+  const values = [
+    index + 1,
+    new Date(row.Date_Stamp).toLocaleDateString('th-TH'),
+    row.Chlorine_Inlet?.toLocaleString('en-US', { minimumFractionDigits: 2 }) ?? '-',
+    row.Chlorine_Outlet?.toLocaleString('en-US', { minimumFractionDigits: 2 }) ?? '-',
+    row.Flow_Water_Inlet?.toLocaleString() ?? '-',
+    row.Total_Flow_Chlorine?.toLocaleString('en-US', { minimumFractionDigits: 2 }) ?? '-',
+    row.Level_Chlorine_Tank?.toLocaleString('en-US', { minimumFractionDigits: 2 }) ?? '-',
+    row.Volume_Chlorine_Tank?.toLocaleString('en-US', { minimumFractionDigits: 2 }) ?? '-',
+    row.Chlorine_Per_Day?.toLocaleString('en-US', { minimumFractionDigits: 2 }) ?? '-'
+  ];
+
+  // ความสูงของเซลล์
+  const cellHeight = 9.375 * 1.3 * 1.5 * mainScale;
+  const fontSize = 3.75 * 1.3 * 1.5 * mainScale;
+  const verticalOffset = (cellHeight - fontSize) / 2; // 🔸 ทำให้ text อยู่กลางแนวตั้ง
+
+  for (let i = 0; i < values.length; i++) {
+    doc.rect(x, y, columnWidths[i], cellHeight).stroke();
+
+    doc.font('THSarabun')
+      .fontSize(fontSize)
+      .text(values[i], x, y + verticalOffset, {
+        width: columnWidths[i],
+        align: 'center'
+      });
+
+    x += columnWidths[i];
+  }
+
+  y += cellHeight;
+
+  // ตรวจสอบว่าจะขึ้นหน้าใหม่ไหม  ถ้าเป็นหน้าแรก ไม่ให้ขึ้นหน้าใหม่อัตโนมัติ
+if (y > doc.page.height - 22.5 * 1.3 * 1.5 * mainScale && doc.page.number > 1) {
+>>>>>>> 05f481648c6792583e87b80e52887b4b2d6fa056
   doc.addPage();
   y = 50; // เริ่มต้นหน้าใหม่ที่ตำแหน่ง y = 50
   
@@ -1713,8 +1829,259 @@ const yStartTotal = ySummary - summaryRowHeight * summaryKeys.length - summaryRo
 // 🔸 สรุปผลรวมเฉพาะ (Flow + Chlorine Summary)
 const totalOnlyHeaders = ['รายการ', 'ผลรวม'];
 const totalOnlyKeys = [
+<<<<<<< HEAD
   { label: 'ปริมาณการจ่ายคลอรีนรวมทั้งเดือน (Litr)', key: 'Chlorine_Per_Day' }, // 👈 เปลี่ยนตามโหมดที่ใช้
   { label: 'ปริมาณน้ำขาเข้ารวมทั้งเดือน (m³)', key: 'MB_Flow_Water_Inlet' }
+=======
+  { label: 'ปริมาณการใช้คลอรีนรายเดือน', key: 'Chlorine_Per_Day' }, // 👈 เปลี่ยนตามโหมดที่ใช้
+  { label: 'อัตราการไหลน้ำขาเข้ารวมทั้งเดือน', key: 'Flow_Water_Inlet' }
+  
+];
+const totalColWidths = [150, 120].map(w => w * mainScale);
+const totalRowHeight = 18 * mainScale;
+const totalFontSize = 10 * mainScale;
+
+// เช็กพื้นที่ก่อนวาด
+if (ySummary + (totalRowHeight * (totalOnlyKeys.length + 1)) > doc.page.height - margin) {
+  doc.addPage();
+  ySummary = margin;
+}
+
+// วาดหัวตาราง
+let tx = startXSummary;
+for (let i = 0; i < totalOnlyHeaders.length; i++) {
+  doc.rect(tx, ySummary, totalColWidths[i], totalRowHeight).fillAndStroke('#FFEAB7', 'black');
+  doc.font('THSarabun-Bold')
+    .fontSize(totalFontSize)
+    .fillColor('black')
+    .text(totalOnlyHeaders[i], tx, ySummary + (totalRowHeight / 4), {
+      width: totalColWidths[i], align: 'center'
+    });
+  tx += totalColWidths[i];
+}
+ySummary += totalRowHeight;
+
+// วาดข้อมูล
+totalOnlyKeys.forEach(item => {
+  tx = startXSummary;
+  const sum = data.map(row => Number(row[item.key]) || 0).reduce((a, b) => a + b, 0).toLocaleString('en-US', { minimumFractionDigits: 2 });
+  const rowVals = [item.label, sum];
+  for (let i = 0; i < rowVals.length; i++) {
+    doc.rect(tx, ySummary, totalColWidths[i], totalRowHeight).stroke();
+    doc.font('THSarabun')
+      .fontSize(totalFontSize)
+      .text(rowVals[i], tx, ySummary + (totalRowHeight - totalFontSize) / 2, {
+        width: totalColWidths[i], align: 'center'
+      });
+    tx += totalColWidths[i];
+  }
+  ySummary += totalRowHeight;
+});
+  
+
+  // --- END PDF & RESPONSE ---
+  doc.end();
+
+  stream.on('finish', () => {
+    res.download(filepath, filename, () => {
+      fs.unlink(filepath, () => {});
+    });
+  });
+
+  stream.on('error', (err) => {
+    console.error('PDF stream error:', err);
+    res.status(500).send('PDF export error');
+  });
+});
+
+// -------------------- [4.1] EXPORT PDF Yearly --------------------
+app.post('/export/pdf/Yearly', async (req, res) => {
+  const data = req.body.data;
+  const PDFDocument = require('pdfkit');
+  const filename = `ChlorineMinburiReport.pdf`; // ใช้ชื่อเดียวกันทั้ง daily/Yearly
+  const filepath = path.join(__dirname, filename);
+
+  const doc = new PDFDocument({ size: 'A4', layout: 'landscape', margin: 30 });
+  const stream = fs.createWriteStream(filepath);
+  doc.pipe(stream);
+
+  // ฟอนต์ไทย
+  doc.registerFont('THSarabun', path.join(__dirname, 'Sarabun-Regular.ttf'));
+  doc.registerFont('THSarabun-Bold', path.join(__dirname, 'Sarabun-Bold.ttf'));
+
+  // ประกาศ mainScale ตรงนี้
+  const mainScale = 1 / 1.25;
+
+  // --- ใส่โลโก้ที่มุมซ้ายบน ---
+const logoPath1 = path.join(__dirname, 'prapa02.png');
+const logoX = doc.page.margins.left;  // ซ้ายสุด margin
+const logoY = 30; // ระยะห่างจากขอบบน (ปรับได้)
+const logoWidth = 50;  // ปรับขนาดโลโก้ให้เหมาะสม
+const logoHeight = 50;
+
+if (fs.existsSync(logoPath1)) {
+  doc.image(logoPath1, logoX, logoY, { width: logoWidth, height: logoHeight });
+}
+
+// --- วาดข้อความรายงาน และวันที่ชิดกับโลโก้ด้านขวา ---
+const textX = logoX + logoWidth + 10; // เลื่อนขวาจากโลโก้ 10 หน่วย
+const textWidth = doc.page.width - doc.page.margins.right - textX; // กว้างเต็มขวาถึง margin
+
+// ข้อความหัวรายงาน
+doc.font('THSarabun-Bold').fontSize(12).fillColor('black')
+  .text('รายงานข้อมูลระบบจ่ายคลอรีนอัตโนมัติปลายสาย สถานีสูบจ่ายประปามีนบุรี',
+    textX, logoY + 5, { width: textWidth, align: 'left' });
+
+// ข้อความวันที่ (ใช้จากเดิม)
+let reportDate = '';
+if (data.length > 0 && data[0].Year_) {
+  reportDate = `ณ ปี ${data[0].Year_ + 543}`; // ✅ แสดงปี พ.ศ.
+} else {
+  reportDate = 'ณ ปี -';
+}
+doc.font('THSarabun').fontSize(9).fillColor('black')
+  .text(reportDate, textX, logoY + 25, { width: textWidth, align: 'left' });
+
+// เลื่อนตำแหน่ง y เพื่อเริ่มวาดหัวตาราง
+doc.moveDown(0); // ปรับห่างจาก header ให้พอเหมาะ
+
+  // กำหนด column และหัวตารางสำหรับ Yearly
+const headers = [
+      'ลำดับ',
+      'เดือน',
+      'ปี',
+      'ปริมาณคลอรีนขาเข้าสถานี (mg/l)',
+      'ปริมาณคลอรีนขาออกสถานี (mg/l)',
+      'อัตราการไหลน้ำขาเข้า (m3/h)',
+      'อัตราการจ่ายคลอรีนรวม   (l/h)',
+      'ระดับคลอรีนในถังเก็บ (m)',
+      'ปริมาณคลอรีนในถังเก็บ (Litr)',
+      'ปริมาณการใช้คลอรีน รายเดือน (Litr)'
+];
+  const columnWidths = [11.35, 11.35, 22.5, 29.35, 29, 32.75, 28, 26, 34.5, 42.75].map(w => w * 1.3 * 1.5 * mainScale);
+  /*const startX = doc.x;
+  let y = doc.y + 3.75 * 1.3 * 1.5 * mainScale;*/
+
+  const startX = logoX;                         // เริ่มชิดซ้ายเท่ากับโลโก้
+  const startY = logoY + logoHeight + 10;      // เลื่อนลงพ้นโลโก้และข้อความ
+  let y = startY;
+
+  let x = startX;
+  const headerBgColor = '#B7D6FF';
+
+  // วาดหัวตาราง
+  const headerHeight = 21 * 1.3 * 1.5 * mainScale;
+  for (let i = 0; i < headers.length; i++) {
+    doc.rect(x, y, columnWidths[i], headerHeight).fillAndStroke(headerBgColor, 'black');
+    doc.font('THSarabun-Bold').fontSize(9 * mainScale).fillColor('black').text(
+      headers[i], x, y + 5, { width: columnWidths[i], align: 'center' }
+    );
+    x += columnWidths[i];
+  }
+  y += headerHeight;
+
+  // วาดข้อมูลในตาราง
+  data.forEach((row, index) => {
+    x = startX;
+    const values = [
+      index + 1,
+      /*new Date(row.Date_Stamp).toLocaleDateString('th-TH'),*/
+      row.Month_?.toFixed(0) ?? '-',
+      row.Year_?.toFixed(0) ?? '-',
+      row.Chlorine_Inlet?.toLocaleString('en-US', { minimumFractionDigits: 2 }) ?? '-',
+      row.Chlorine_Outlet?.toLocaleString('en-US', { minimumFractionDigits: 2 }) ?? '-',
+      row.Flow_Water_Inlet?.toLocaleString('en-US', { minimumFractionDigits: 2 }) ?? '-',
+      row.Total_Flow_Chlorine?.toLocaleString('en-US', { minimumFractionDigits: 2 }) ?? '-',
+      row.Level_Chlorine_Tank?.toLocaleString('en-US', { minimumFractionDigits: 2 }) ?? '-',
+      row.Volume_Chlorine_Tank?.toLocaleString('en-US', { minimumFractionDigits: 2 }) ?? '-',
+      row.Chlorine_Per_Month?.toLocaleString('en-US', { minimumFractionDigits: 2 }) ?? '-'
+    ];
+    for (let i = 0; i < values.length; i++) {
+      doc.rect(x, y, columnWidths[i], 9.375 * 1.3 * 1.5 * mainScale).stroke();
+      doc.font('THSarabun').fontSize(3.75 * 1.3 * 1.5 * mainScale).text(values[i], x, y + 2 * 1.3 * 1.5 * mainScale, {
+        width: columnWidths[i],
+        align: 'center'
+      });
+      x += columnWidths[i];
+    }
+    y += 9.375 * 1.3 * 1.5 * mainScale;
+    if (y > doc.page.height - 22.5 * 1.3 * 1.5 * mainScale) {
+      doc.addPage();
+      y = 18.75 * 1.3 * 1.5 * mainScale;
+    }
+  });
+
+  // --- วาดตารางสรุปแบบละเอียด (Summary Table) ---
+  const summaryHeaders = ['รายการ', 'สูงสุด', 'ต่ำสุด', 'เฉลี่ย'/*, 'ผลรวม'*/]; 
+  const summaryKeys = [
+    { label: 'ปริมาณคลอรีนขาเข้า (mg/l)', key: 'Chlorine_Inlet' },
+    { label: 'ปริมาณคลอรีนขาออก (mg/l)', key: 'Chlorine_Outlet' },
+    { label: 'อัตราการไหลของน้ำขาเข้า (m³)', key: 'Flow_Water_Inlet' },
+    { label: 'อัตราการจ่ายคลอรีนรวม (l/h)', key: 'Total_Flow_Chlorine' }
+    /*{ label: 'ระดับคลอรีนในถัง (m)', key: 'Level_Chlorine_Tank' },
+    { label: 'ปริมาณคลอรีนในถัง (Litr)', key: 'Volume_Chlorine_Tank' }*/
+  ];
+
+  const summaryScale = 3.0;
+  const summaryColWidths = [40, 26, 26, 26/*, 26*/].map(w => w * summaryScale * mainScale);
+  const summaryRowHeight = 8 * summaryScale * mainScale;
+  const summaryFontSize = 9 * mainScale;
+  const summaryTableWidth = summaryColWidths.reduce((a, b) => a + b, 0);
+  const margin = 30;
+  const pageWidth = doc.page.width - margin * 2;
+
+  // ตำแหน่งขวาสุด
+  const startXSummary = pageWidth - summaryTableWidth + margin - 50; //ขยับซ้าย
+  let ySummary = startY; // ปรับจาก 47 เป็น 46
+
+  // วาดหัว summary
+  let sx = startXSummary;
+  for (let i = 0; i < summaryHeaders.length; i++) {
+    doc.rect(sx, ySummary, summaryColWidths[i], summaryRowHeight)
+      .fillAndStroke('#B7FFD6', 'black');
+    doc.font('THSarabun-Bold').fontSize(summaryFontSize).fillColor('black').text(
+      summaryHeaders[i], sx, ySummary + 3, {
+        width: summaryColWidths[i], align: 'center'
+      }
+    );
+    sx += summaryColWidths[i];
+  }
+  ySummary += summaryRowHeight;
+
+  // วาดข้อมูล summary
+  summaryKeys.forEach(item => {
+    sx = startXSummary;
+    const arr = data.map(row => Number(row[item.key]) || 0);
+    const max = arr.length ? Math.max(...arr).toLocaleString('en-US', { minimumFractionDigits: 2 }) : '';
+    const min = arr.length ? Math.min(...arr).toLocaleString('en-US', { minimumFractionDigits: 2 }) : '';
+    const avg = arr.length ? (arr.reduce((a, b) => a + b, 0) / arr.length).toLocaleString('en-US', { minimumFractionDigits: 2 }) : '';
+    // ผลรวม เฉพาะ Flow_Water_Inlet, Total_Flow_Chlorine (ที่เหลือเว้นว่าง)
+    let sum = '';
+    if (item.key === 'Flow_Water_Inlet' || item.key === 'Total_Flow_Chlorine') {
+      sum = arr.length ? arr.reduce((a, b) => a + b, 0).toLocaleString('en-US', { minimumFractionDigits: 2 }) : '';
+    }
+    const rowVals = [item.label, max, min, avg/*, sum*/];
+    for (let i = 0; i < rowVals.length; i++) {
+      doc.rect(sx, ySummary, summaryColWidths[i], summaryRowHeight).stroke();
+      doc.font('THSarabun').fontSize(summaryFontSize).fillColor('black').text(
+        rowVals[i], sx, ySummary + 3, {
+          width: summaryColWidths[i], align: 'center'
+        }
+      );
+      sx += summaryColWidths[i];
+    }
+    ySummary += summaryRowHeight;
+  });
+
+// ตารางผลรวมเฉพาะ (เว้นบรรทัดลงมา)
+ySummary += 15; // หรือ 20 เพื่อให้ห่างชัดเจนจากตารางบน
+
+// 🔸 สรุปผลรวมเฉพาะ (Flow + Chlorine Summary)
+const totalOnlyHeaders = ['รายการ', 'ผลรวม (Litr)'];
+const totalOnlyKeys = [
+  { label: 'ปริมาณการใช้คลอรีนรายปี', key: 'Chlorine_Per_Month' }, // 👈 เปลี่ยนตามโหมดที่ใช้
+  { label: 'อัตราการไหลน้ำขาเข้ารวมทั้งปี', key: 'Flow_Water_Inlet' }
+>>>>>>> 05f481648c6792583e87b80e52887b4b2d6fa056
   
 ];
 const totalColWidths = [220, 120].map(w => w * mainScale);
@@ -1756,9 +2123,13 @@ totalOnlyKeys.forEach(item => {
   yTotal += totalRowHeight;
 });
 
+<<<<<<< HEAD
   // ปรับ ySummary ให้เป็นตัวที่สูงกว่าระหว่าง ySummary กับ yTotal
   ySummary = Math.max(ySummary, yTotal) + 10;
   
+=======
+
+>>>>>>> 05f481648c6792583e87b80e52887b4b2d6fa056
 
   // --- END PDF & RESPONSE ---
   doc.end();
@@ -2091,7 +2462,10 @@ const columnWidths = [40, 40, 70, 70, 70, 70, 70, 70, 70, 70, 70, 80];
 });
 
 // -------------------- [LOGIN API] --------------------
+<<<<<<< HEAD
 // Simple login endpoint: validate username/password and return success/fail
+=======
+>>>>>>> 05f481648c6792583e87b80e52887b4b2d6fa056
 app.post('/login', async (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) {
@@ -2121,6 +2495,7 @@ app.post('/login', async (req, res) => {
   }
 });
 
+<<<<<<< HEAD
 // -------------------- [USERS API - CRUD for dbo.Login] --------------------
 // Assumptions:
 // - Table name is Login (dbo.Login)
@@ -2329,3 +2704,12 @@ app.post('/api/debug/setup-roles', async (req, res) => {
 app.listen(port, () => {
   console.log(`✅ Server running at http://localhost:${port}`);
 });
+=======
+app.get('/', (req, res) => {
+  res.redirect('/login.html');
+});
+// -------------------- [5] START SERVER --------------------
+app.listen(port, () => {
+  console.log(`✅ Server running at http://localhost:${port}`);
+});
+>>>>>>> 05f481648c6792583e87b80e52887b4b2d6fa056

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // ฟังก์ชันออกจากระบบ
 function logout() {
   // ลบข้อมูล session/token จาก localStorage
@@ -8,10 +9,13 @@ function logout() {
   window.location.href = 'login.html';
 }
 
+=======
+>>>>>>> 05f481648c6792583e87b80e52887b4b2d6fa056
 let currentData = [];
 let chartInstance = null; // <-- ย้ายมาด้านบนสุด
 let chlorineChartInstance = null;
 let flowChartInstance = null;
+<<<<<<< HEAD
 let chlorineTotalChartInstance = null;
 let chlorineStockChartInstance = null;
 let chlorineLineChartInstance = null;
@@ -43,10 +47,13 @@ function adToShownYear(ad) {
   if (!isFinite(n)) return '';
   return n + 543;
 }
+=======
+>>>>>>> 05f481648c6792583e87b80e52887b4b2d6fa056
 
 function getReport() {
   const type = document.getElementById('reportType').value;
   let date = '';
+<<<<<<< HEAD
   let endDate = '';
   
   // ซ่อนกราฟเมื่อกดค้นหา
@@ -59,6 +66,8 @@ function getReport() {
     chartButton.textContent = 'แสดงกราฟ';
   }
   
+=======
+>>>>>>> 05f481648c6792583e87b80e52887b4b2d6fa056
   if (type === 'daily') {
     let day = document.getElementById('reportDay').value;
     let month = document.getElementById('reportMonth').value;
@@ -97,6 +106,7 @@ function getReport() {
       return;
     }
   } else if (type === 'yearly') {
+<<<<<<< HEAD
     const yearShown = document.getElementById('reportYear').value;
     date = String(shownYearToAD(yearShown));
   } else if (type === 'queryYearly') {
@@ -145,6 +155,9 @@ function getReport() {
       alert("วันที่เริ่มต้นต้องน้อยกว่าหรือเท่ากับวันที่สิ้นสุด");
       return;
     }
+=======
+    date = document.getElementById('reportYear').value;
+>>>>>>> 05f481648c6792583e87b80e52887b4b2d6fa056
   }
 
   if (!date || !type) {
@@ -154,6 +167,7 @@ function getReport() {
 
   document.getElementById('showChartBtn').style.display = 'none'; // ซ่อนปุ่มก่อน
 
+<<<<<<< HEAD
   console.log('Type:', type, 'Date:', date, 'EndDate:', endDate); // Debug log
   
   let url = `/ChlorineReport?date=${date}&type=${type}`;
@@ -174,6 +188,12 @@ function getReport() {
     .then(data => {
       console.log('Received data:', data); // Debug log
       // เรียงข้อมูลตามวันที่และเวลา
+=======
+  fetch(`/ChlorineReport?date=${date}&type=${type}`)
+    .then(res => res.json())
+    .then(data => {
+      // เรียงข้อมูลตามเวลา (Time_Stamp, time, hour)
+>>>>>>> 05f481648c6792583e87b80e52887b4b2d6fa056
       data.sort((a, b) => {
         // เรียงตามวันที่ก่อน
         const dateA = new Date(a.Date_Stamp || a.date || a.Date);
@@ -223,9 +243,14 @@ function renderTable(data, type) {
     return;
   }
 
+<<<<<<< HEAD
   if (type === 'daily' || type === 'query') {
     // หัวตาราง daily
     //<th rowspan="2">ลำดับ</th>
+=======
+  if (type === 'daily') {
+    // หัวตาราง daily
+>>>>>>> 05f481648c6792583e87b80e52887b4b2d6fa056
     thead.innerHTML = `
       <tr style="background:#2563eb;color:#fff;">
         
@@ -244,7 +269,6 @@ function renderTable(data, type) {
         <th rowspan="2">ปริมาณการใช้คลอรีน<br>รายชั่วโมง (Litr)</th> <!-- เพิ่มตรงนี้ -->
       </tr>
       <tr style="background:#2563eb;color:#fff;">
-        <th>ขาเข้าสถานี</th>
         <th>ขาออกสถานี</th>
       </tr>
     `;
@@ -556,6 +580,7 @@ function exportPDF() {
   }
   const type = document.getElementById('reportType').value;
   let url = '/export/pdf';
+<<<<<<< HEAD
   if (type === 'monthly' || type === 'queryMonthly') url = '/export/pdf/monthly';
   else if (type === 'yearly' || type === 'queryYearly') url = '/export/pdf/yearly';
   else if (type === 'query') url = '/export/pdf'; // Query date ใช้ template เดียวกับ daily
@@ -567,6 +592,11 @@ function exportPDF() {
     queryMonthly: 'QueryMonthly', 
     queryYearly: 'QueryYearly' 
   };
+=======
+  if (type === 'monthly') url = '/export/pdf/monthly';
+  else if (type === 'yearly') url = '/export/pdf/yearly';
+  const typeMap = { daily: 'Daily', monthly: 'Monthly', yearly: 'Yearly' };
+>>>>>>> 05f481648c6792583e87b80e52887b4b2d6fa056
 
   fetch(url, {
     method: 'POST',
